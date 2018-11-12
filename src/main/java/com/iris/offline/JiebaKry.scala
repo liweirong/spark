@@ -33,9 +33,9 @@ object JiebaKry {
       df.withColumn("seg",jieba_udf(col(colname)))
     }
 
-    val df =spark.sql("select sentence,label from badou.news_noseg limit 300")
+    val df =spark.sql("select sentence,label from bigdata.news_noseg limit 300")
     val df_seg = jieba_seg(df,"sentence")
     df_seg.show()
-    df_seg.write.mode("overwrite").saveAsTable("badou.news_jieba")
+    df_seg.write.mode("overwrite").saveAsTable("bigdata.news_jieba")
   }
 }

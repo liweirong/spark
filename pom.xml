@@ -10,7 +10,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <scala.binary.version>2.11</scala.binary.version>
+        <scala.binary.version>2.12.4</scala.binary.version>
         <PermGen>64m</PermGen>
         <MaxPermGen>512m</MaxPermGen>
         <spark.version>2.3.1</spark.version>
