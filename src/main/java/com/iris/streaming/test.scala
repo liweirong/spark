@@ -27,7 +27,7 @@ object test {
 // 2 窗口滑动  有些数据在里面存放20秒
 
 
-sc.checkpoint("D:\\workspace\\idea_workspace\\git_project\\sparkStreamingTmp")
+    sc.checkpoint("D:\\workspace\\idea_workspace\\git_project\\sparkStreamingTmp")
     val addFunc=(curValues:Seq[Long],preValueState:Option[Long])=>{
       val curCount = curValues.sum // 当前两秒的批次求和
       val preCount = preValueState.getOrElse(0L)
