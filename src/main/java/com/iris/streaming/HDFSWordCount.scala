@@ -5,6 +5,9 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 /**
   * /usr/local/src/spark-2.3.1-bin-hadoop2.7/examples/src/main/scala/org/apache/spark/examples/streaming/HdfsWordCount.scala
+  * 执行 run_word_count 后即可完成任务的提交
+  * kill任务
+  * yarn application -kill application_1543936592361_0006
   */
 object HDFSWordCount {
 
