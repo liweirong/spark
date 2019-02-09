@@ -24,6 +24,7 @@ object UserBase {
 
     val df = udata.selectExpr("user_id as user_v", "item_id as item_id", "rating as rating_v") //|user_v|item_id|rating_v|
     val df_decare = udata.join(df, "item_id")
+      .filter("cast(user_id as long) <> cast(user_v as long)") // 不等于！排除对角，笛卡儿积也需要，互为相似
     //    |item_id|user_id|rating|timestamp|user_v|rating_v|
     //    +-------+-------+------+---------+------+--------+
     //    |    242|    196|     3|881250949|   721|       3|
