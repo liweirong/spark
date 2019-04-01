@@ -26,7 +26,7 @@ object test {
     //    //1 这种方法每两秒都会输出，没有输入就没有输出
 
 
-    //    val wordCounts2 = words.map((_,1)).reduceByKeyAndWindow((a:Int,b:Int)=>a+b,Seconds(20),Seconds(2)) // 必须是倍数
+    //    val wordCounts2 = words.map((_,1)).reduceByKeyAndWindow((a:Int,b:Int)=>a+b,Seconds(20),Seconds(2)) // 必须是sc设置的倍数 - 2的倍数
     //    wordCounts2.print()
     // 2 窗口滑动  有些数据在里面存放20秒
 
