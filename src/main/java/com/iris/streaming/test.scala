@@ -32,9 +32,13 @@ object test {
 
 
     sc.checkpoint("D:\\workspace\\idea_workspace\\git_project\\sparkStreamingTmp")
+    /**
+      * a:20
+      * b:30
+      */
     val addFunc = (curValues: Seq[Long], preValueState: Option[Long]) => {
       val curCount = curValues.sum // 当前两秒的批次求和
-      val preCount = preValueState.getOrElse(0L) // 存入内存中
+      val preCount = preValueState.getOrElse(0L) // 以前批次的数据
       Some(curCount + preCount)
     }
     val wordCounts3 = words.map((_, 1L)).updateStateByKey[Long](addFunc)
