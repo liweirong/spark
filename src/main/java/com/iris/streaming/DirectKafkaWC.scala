@@ -35,12 +35,11 @@ object DirectKafkaWC {
       String,
       String,
       StringDecoder,
-      StringDecoder](
-      ssc, kafkaParams, topicsSet)
+      StringDecoder](ssc, kafkaParams, topicsSet)
 
     // Get the lines, split them into words, count the words and print
     val lines = messages.map(_._2) // 第二个值才是value
-    //    val words = lines.flatMap(_.split(" "))
+    //    val words = lines.flatMap(_.split(" ")) -- 一句话的话用这个，换行用下面
     val wordCounts = lines.map(x => (x, 1L)).reduceByKey(_ + _)
     wordCounts.print()
 
