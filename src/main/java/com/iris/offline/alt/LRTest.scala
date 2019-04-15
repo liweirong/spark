@@ -19,18 +19,18 @@ object LRTest {
     val trains = spark.sql("select * from bigdata.trains")
 
     val (prodFeat,userFeat) = SimpleFeature.Feat(priors,orders)
-//    prior,train,test用户集合的情况分析 结论：train+test=prior
-    //    131209
+    // prior,train,test用户集合的情况分析 结论：train+test=prior | train进行训练，再用test来测试
+    // 131209,已经发生购买 label = 1
     val train_user = orders.filter("eval_set='train'").select("user_id").distinct()
-//    75000
+    // 75000
     val test_user = orders.filter("eval_set='test'").select("user_id").distinct()
-//    206209
+    // 206209
     val prior_user = orders.filter("eval_set='prior'").select("user_id").distinct()
-//    0
+    // 0
     val interset_user = train_user.intersect(test_user)
-//    131209
+    // 131209
     val train_inter = prior_user.intersect(train_user)
-//    75000
+    // 75000
     val test_inter = prior_user.intersect(test_user)
 
     val op = orders.join(priors,"order_id") //eval_set= prior
