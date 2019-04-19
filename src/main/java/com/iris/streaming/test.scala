@@ -1,5 +1,6 @@
 package com.iris.streaming
 
+import com.iris.util.ConnectionPool
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{Seconds, StreamingContext}
@@ -45,6 +46,26 @@ object test {
     wordCounts3.print()
 
     //updateStateByKey 全局统计量 必须设置checkPoint，不然报错 ：java.lang.IllegalArgumentException: requirement failed: The checkpoint directory has not been set. Please set it by StreamingContext.checkpoint().
+
+
+    /**
+      * 结果存mysql - -成功
+      */
+    wordCounts3.foreachRDD(rdd => {
+      // 错误示范1：在driver创建连接，在woker使用。会报错connection object not serializable。
+      // val conn = ConnectionPool.getConnection();
+      rdd.foreachPartition(eachPartition => {
+        // 错误示范2：rdd每个记录都创建连接，成本非常高。
+        // 正确示范：拿到rdd以后foreachPartition，每个partition创建连接，而且使用数据库连接池。
+        val conn = ConnectionPool.getConnection()
+        eachPartition.foreach(word => {
+          val sql = "insert into word_count (word,count,time) values('" + word._1 + "'," + word._2 + ",1)"
+          val stmt = conn.createStatement
+          stmt.executeUpdate(sql)
+        })
+        ConnectionPool.returnConnection(conn)
+      })
+    })
 
     sc.start() // Start the computation
     sc.awaitTermination() // Wait for the computation to terminate

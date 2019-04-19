@@ -1,5 +1,6 @@
 package com.iris.streaming
 
+import com.iris.util.ConnectionPool
 import kafka.serializer.StringDecoder
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -7,6 +8,9 @@ import org.apache.spark.streaming.kafka.{HasOffsetRanges, KafkaManager, OffsetRa
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object DirectOffsetDem {
+
+  case class WordCount(word: String, count: Int)
+
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
 
@@ -40,8 +44,27 @@ object DirectOffsetDem {
       }
     }
 
-    messages.map(_._2).map((_, 1L)).reduceByKey(_ + _).print
+    val result1 = messages.map(_._2).map((_, 1L)).reduceByKey(_ + _)
+    result1.print()
 
+    /**
+      * 存mysql
+      */
+    result1.foreachRDD(rdd => {
+      // 错误示范1：在driver创建连接，在woker使用。会报错connection object not serializable。
+      // val conn = ConnectionPool.getConnection();
+      rdd.foreachPartition(eachPartition => {
+        // 错误示范2：rdd每个记录都创建连接，成本非常高。
+        // 正确示范：拿到rdd以后foreachPartition，每个partition创建连接，而且使用数据库连接池。
+        val conn = ConnectionPool.getConnection()
+        eachPartition.foreach(word => {
+          val sql = "insert into WordCount(word,count) values('" + word._1 + "'," + word._2 + ")"
+          val stmt = conn.createStatement
+          stmt.executeUpdate(sql)
+        })
+        ConnectionPool.returnConnection(conn)
+      })
+    })
     ssc.start()
     ssc.awaitTermination()
   }
